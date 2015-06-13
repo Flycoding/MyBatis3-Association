@@ -20,5 +20,6 @@
     </environments>
     <mappers>
         <mapper resource="mapper/BlogMapper.xml"/>
+        <mapper resource="mapper/AuthorMapper.xml"/>
     </mappers>
 </configuration>
