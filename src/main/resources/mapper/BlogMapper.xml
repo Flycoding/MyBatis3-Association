@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.flyingh.mapper.BlogMapper">
+    <resultMap id="BlogResult" type="Blog">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="url" column="url"/>
+        <association property="author" column="blog_id" javaType="Author" columnPrefix="a_">
+            <id property="id" column="id"/>
+            <result property="name" column="name"/>
+            <result property="email" column="email"/>
+        </association>
+        <collection property="posts" column="blog_id" ofType="Post" columnPrefix="p_">
+            <id property="id" column="id"/>
+            <result property="title" column="title"/>
+            <collection property="tags" column="post_id" ofType="Tag" columnPrefix="t_">
+                <id property="id" column="id"/>
+                <result property="value" column="value"/>
+            </collection>
+        </collection>
+    </resultMap>
+
+    <select id="selectBlog" resultMap="BlogResult" parameterType="_int">
+        SELECT b.id,b.name,b.url,
+               a.id AS a_id,a.name as a_name,a.email AS a_email,
+               p.id as p_id,p.title as p_title,
+               t.id as p_t_id,t.value AS p_t_value
+        FROM blog b
+        LEFT OUTER JOIN author a on b.id=a.blog_id
+        LEFT OUTER JOIN post p ON b.id=p.blog_id
+        LEFT OUTER JOIN post_tag pt on p.id=pt.post_id
+        LEFT OUTER JOIN tag t ON pt.tag_id=t.id
+        WHERE b.id=#{id}
+    </select>
+</mapper>
